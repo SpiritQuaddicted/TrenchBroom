@@ -65,7 +65,7 @@ namespace TrenchBroom {
             return description;
         }
         
-        void EmptyBrushEntityIssueGenerator::generate(Entity* entity, IssueList& issues) const {
+        void EmptyBrushEntityIssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {
             assert(entity != NULL);
             if (!entity->worldspawn()) {
                 const Assets::EntityDefinition* definition = entity->definition();

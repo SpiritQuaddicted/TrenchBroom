@@ -36,12 +36,12 @@ namespace TrenchBroom {
     namespace IO {
         MapWriter::~MapWriter() {}
         
-        struct CategorizeObjects : public Model::ObjectVisitor {
+        struct CategorizeEntities : public Model::ObjectVisitor {
             Model::Entity* worldspawn;
             Model::EntityList pointEntities;
             Model::EntityBrushesMap brushEntities;
             
-            CategorizeObjects() :
+            CategorizeEntities() :
             worldspawn(NULL) {}
             
             void doVisit(Model::Entity* entity) {
@@ -54,13 +54,15 @@ namespace TrenchBroom {
                 if (entity->worldspawn())
                     worldspawn = entity;
             }
+            
+            void doVisit(Model::Group* group) {}
         };
         
         void MapWriter::writeObjectsToStream(const Model::ObjectList& objects, std::ostream& stream) {
             assert(stream.good());
             stream.unsetf(std::ios::floatfield);
 
-            CategorizeObjects toWrite;
+            CategorizeEntities toWrite;
             Model::Object::accept(objects.begin(), objects.end(), toWrite);
             
             // write worldspawn first

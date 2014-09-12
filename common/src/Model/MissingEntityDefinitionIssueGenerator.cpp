@@ -64,7 +64,7 @@ namespace TrenchBroom {
             return description;
         }
         
-        void MissingEntityDefinitionIssueGenerator::generate(Entity* entity, IssueList& issues) const {
+        void MissingEntityDefinitionIssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {
             assert(entity != NULL);
             if (entity->definition() == NULL)
                 issues.push_back(new MissingEntityDefinitionIssue(entity));

@@ -37,7 +37,7 @@ namespace TrenchBroom {
             IssueType type() const;
             const String& description() const;
 
-            void generate(Brush* brush, IssueList& issues) const;
+            void doGenerate(Brush* brush, IssueList& issues) const;
         };
     }
 }

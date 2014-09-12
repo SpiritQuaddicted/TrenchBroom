@@ -28,9 +28,48 @@
 namespace TrenchBroom {
     namespace Model {
         IssueGenerator::~IssueGenerator() {}
+
+        class IssueGeneratorVisitor : public ObjectVisitor {
+        private:
+            const IssueGenerator& m_generator;
+            IssueList& m_issues;
+        public:
+            IssueGeneratorVisitor(const IssueGenerator& generator, IssueList& issues) :
+            m_generator(generator),
+            m_issues(issues) {}
+        private:
+            void doVisit(Group* group) {
+                m_generator.generate(group, m_issues);
+            }
+            
+            void doVisit(Entity* entity) {
+                m_generator.generate(entity, m_issues);
+            }
+            
+            void doVisit(Brush* brush) {
+                m_generator.generate(brush, m_issues);
+            }
+        };
         
-        void IssueGenerator::generate(Group* group, IssueList& issues) const {}
-        void IssueGenerator::generate(Entity* entity, IssueList& issues) const {}
-        void IssueGenerator::generate(Brush* brush, IssueList& issues) const {}
+        void IssueGenerator::generate(Object* object, IssueList& issues) const {
+            IssueGeneratorVisitor visitor(*this, issues);
+            object->accept(visitor);
+        }
+        
+        void IssueGenerator::generate(Group* group, IssueList& issues) const {
+            doGenerate(group, issues);
+        }
+        
+        void IssueGenerator::generate(Entity* entity, IssueList& issues) const {
+            doGenerate(entity, issues);
+        }
+        
+        void IssueGenerator::generate(Brush* brush, IssueList& issues) const {
+            doGenerate(brush, issues);
+        }
+
+        void IssueGenerator::doGenerate(Group* group, IssueList& issues) const {}
+        void IssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {}
+        void IssueGenerator::doGenerate(Brush* brush, IssueList& issues) const {}
     }
 }

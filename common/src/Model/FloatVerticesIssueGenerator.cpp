@@ -62,7 +62,7 @@ namespace TrenchBroom {
             return description;
         }
 
-        void FloatVerticesIssueGenerator::generate(Brush* brush, IssueList& issues) const {
+        void FloatVerticesIssueGenerator::doGenerate(Brush* brush, IssueList& issues) const {
             assert(brush != NULL);
             const BrushVertexList& vertices = brush->vertices();
             BrushVertexList::const_iterator it, end;

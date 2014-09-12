@@ -65,7 +65,7 @@ namespace TrenchBroom {
             return description;
         }
         
-        void PointEntityWithBrushesIssueGenerator::generate(Entity* entity, IssueList& issues) const {
+        void PointEntityWithBrushesIssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {
             assert(entity != NULL);
             const Assets::EntityDefinition* definition = entity->definition();
             if (definition != NULL && definition->type() == Assets::EntityDefinition::Type_PointEntity && !entity->brushes().empty())

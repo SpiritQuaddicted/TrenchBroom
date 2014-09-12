@@ -24,6 +24,7 @@
 #include "Model/BrushFace.h"
 #include "Model/BrushGeometry.h"
 #include "Model/Entity.h"
+#include "Model/Group.h"
 #include "Model/Layer.h"
 #include "Model/ModelUtils.h"
 
@@ -401,23 +402,27 @@ namespace TrenchBroom {
                 return m_result;
             }
         private:
-            void doVisit(const Entity* entity) {
-                m_result = contains(entity);
+            void doVisit(const Group* group) {
+                m_result = contains(group->bounds());
             }
             
-            bool contains(const Entity* entity) const {
-                if (m_this->bounds().contains(entity->bounds()))
+            void doVisit(const Entity* entity) {
+                m_result = contains(entity->bounds());
+            }
+            
+            void doVisit(const Brush* brush) {
+                m_result = contains(brush);
+            }
+            
+            bool contains(const BBox3& bounds) const {
+                if (m_this->bounds().contains(bounds))
                     return true;
-                const Vec3::List vertices = bBoxVertices(entity->bounds());
+                const Vec3::List vertices = bBoxVertices(bounds);
                 for (size_t i = 0; i < vertices.size(); ++i) {
                     if (!m_this->containsPoint(vertices[i]))
                         return false;
                 }
                 return true;
-            }
-            
-            void doVisit(const Brush* brush) {
-                m_result = contains(brush);
             }
             
             bool contains(const Brush* brush) const {
@@ -451,23 +456,27 @@ namespace TrenchBroom {
                 return m_result;
             }
         private:
-            void doVisit(const Entity* entity) {
-                m_result = intersects(entity);
+            void doVisit(const Group* group) {
+                m_result = intersects(group->bounds());
             }
             
-            bool intersects(const Entity* entity) const {
-                if (!m_this->bounds().intersects(entity->bounds()))
+            void doVisit(const Entity* entity) {
+                m_result = intersects(entity->bounds());
+            }
+            
+            void doVisit(const Brush* brush) {
+                m_result = intersects(brush);
+            }
+            
+            bool intersects(const BBox3& bounds) const {
+                if (!m_this->bounds().intersects(bounds))
                     return false;
-                const Vec3::List vertices = bBoxVertices(entity->bounds());
+                const Vec3::List vertices = bBoxVertices(bounds);
                 for (size_t i = 0; i < vertices.size(); ++i) {
                     if (m_this->containsPoint(vertices[i]))
                         return true;
                 }
                 return false;
-            }
-            
-            void doVisit(const Brush* brush) {
-                m_result = intersects(brush);
             }
             
             bool intersects(const Brush* brush) {

@@ -38,8 +38,8 @@ namespace TrenchBroom {
             IssueType type() const;
             const String& description() const;
             
-            void generate(Entity* entity, IssueList& issues) const;
-            void generate(Brush* brush, IssueList& issues) const;
+            void doGenerate(Entity* entity, IssueList& issues) const;
+            void doGenerate(Brush* brush, IssueList& issues) const;
         private:
             void doGenerate(Object* object, IssueList& issues) const;
         };

@@ -25,6 +25,7 @@
 #include "IO/Path.h"
 #include "Model/Brush.h"
 #include "Model/BrushVertex.h"
+#include "Model/Group.h"
 #include "Model/Layer.h"
 #include "Model/Map.h"
 #include "Model/ModelUtils.h"
@@ -603,20 +604,16 @@ namespace TrenchBroom {
                 return m_result;
             }
             
+            void doVisit(const Group* group) {
+                m_result = m_this->bounds().contains(group->bounds());
+            }
+            
             void doVisit(const Entity* entity) {
                 m_result = m_this->bounds().contains(entity->bounds());
             }
             
             void doVisit(const Brush* brush) {
-                const BBox3& myBounds = m_this->bounds();
-                const BrushVertexList& vertices = brush->vertices();
-                for (size_t i = 0; i < vertices.size(); ++i) {
-                    if (!myBounds.contains(vertices[i]->position)) {
-                        m_result = false;
-                        return;
-                    }
-                }
-                m_result = true;
+                m_result = m_this->bounds().contains(brush->bounds());
             }
         };
         
@@ -639,20 +636,16 @@ namespace TrenchBroom {
                 return m_result;
             }
             
+            void doVisit(const Group* group) {
+                m_result = m_this->bounds().intersects(group->bounds());
+            }
+            
             void doVisit(const Entity* entity) {
                 m_result = m_this->bounds().intersects(entity->bounds());
             }
             
             void doVisit(const Brush* brush) {
-                const BBox3& myBounds = m_this->bounds();
-                const BrushVertexList& vertices = brush->vertices();
-                for (size_t i = 0; i < vertices.size(); ++i) {
-                    if (myBounds.contains(vertices[i]->position)) {
-                        m_result = true;
-                        return;
-                    }
-                }
-                m_result = false;
+                m_result = m_this->bounds().intersects(brush->bounds());
             }
         };
         

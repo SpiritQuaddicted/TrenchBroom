@@ -67,7 +67,7 @@ namespace TrenchBroom {
             return description;
         }
 
-        void EntityLinkTargetIssueGenerator::generate(Entity* entity, IssueList& issues) const {
+        void EntityLinkTargetIssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {
             assert(entity != NULL);
             const Model::PropertyKeyList missingLinkTargets = entity->findMissingLinkTargets();
             const Model::PropertyKeyList missingKillTargets = entity->findMissingKillTargets();

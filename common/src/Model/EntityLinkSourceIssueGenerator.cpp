@@ -61,7 +61,7 @@ namespace TrenchBroom {
             return description;
         }
         
-        void EntityLinkSourceIssueGenerator::generate(Entity* entity, IssueList& issues) const {
+        void EntityLinkSourceIssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {
             assert(entity != NULL);
             if (entity->hasMissingSources())
                 issues.push_back(new EntityLinkSourceIssue(entity));

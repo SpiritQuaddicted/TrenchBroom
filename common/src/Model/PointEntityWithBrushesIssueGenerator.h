@@ -32,7 +32,7 @@ namespace TrenchBroom {
             IssueType type() const;
             const String& description() const;
             
-            void generate(Entity* entity, IssueList& issues) const;
+            void doGenerate(Entity* entity, IssueList& issues) const;
         };
     }
 }

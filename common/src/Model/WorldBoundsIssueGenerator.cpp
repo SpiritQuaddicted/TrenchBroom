@@ -61,11 +61,11 @@ namespace TrenchBroom {
             return description;
         }
         
-        void WorldBoundsIssueGenerator::generate(Entity* entity, IssueList& issues) const {
+        void WorldBoundsIssueGenerator::doGenerate(Entity* entity, IssueList& issues) const {
             doGenerate(entity, issues);
         }
         
-        void WorldBoundsIssueGenerator::generate(Brush* brush, IssueList& issues) const {
+        void WorldBoundsIssueGenerator::doGenerate(Brush* brush, IssueList& issues) const {
             doGenerate(brush, issues);
         }
 
