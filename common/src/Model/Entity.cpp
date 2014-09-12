@@ -85,12 +85,6 @@ namespace TrenchBroom {
             return EntitySnapshot(*this);
         }
 
-        const BBox3& Entity::bounds() const {
-            if (!m_boundsValid)
-                validateBounds();
-            return m_bounds;
-        }
-
         void Entity::pick(const Ray3& ray, Hits& hits) {
             const BBox3& myBounds = bounds();
             if (!myBounds.contains(ray.origin)) {
@@ -556,6 +550,46 @@ namespace TrenchBroom {
             }
         }
 
+        
+        void Entity::setOrigin(const Vec3& origin) {
+            addOrUpdateProperty(PropertyKeys::Origin, origin.rounded().asString());
+        }
+        
+        void Entity::applyRotation(const Mat4x4& rotation) {}
+
+        const BBox3& Entity::doGetBounds() const {
+            if (!m_boundsValid)
+                validateBounds();
+            return m_bounds;
+        }
+
+        void Entity::invalidateBounds() {
+            m_boundsValid = false;
+        }
+        
+        void Entity::validateBounds() const {
+            const Assets::EntityDefinition* def = definition();
+            if (def != NULL && def->type() == Assets::EntityDefinition::Type_PointEntity) {
+                m_bounds = static_cast<const Assets::PointEntityDefinition*>(def)->bounds();
+                m_bounds.translate(origin());
+            } else if (!m_brushes.empty()) {
+                m_bounds = m_brushes[0]->bounds();
+                for (size_t i = 1; i < m_brushes.size(); ++i)
+                    m_bounds.mergeWith(m_brushes[i]->bounds());
+            } else {
+                m_bounds = DefaultBounds;
+                m_bounds.translate(origin());
+            }
+            m_boundsValid = true;
+        }
+        
+        void Entity::doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds) {
+            setOrigin(transformation * origin());
+            
+            const Mat4x4 rotation = stripTranslation(transformation);
+            applyRotation(rotation);
+        }
+        
         class EntityContains : public ConstObjectVisitor {
         private:
             const Entity* m_this;
@@ -646,26 +680,6 @@ namespace TrenchBroom {
             acceptRecursively(m_brushes.begin(), m_brushes.end(), visitor);
         }
         
-        void Entity::invalidateBounds() {
-            m_boundsValid = false;
-        }
-        
-        void Entity::validateBounds() const {
-            const Assets::EntityDefinition* def = definition();
-            if (def != NULL && def->type() == Assets::EntityDefinition::Type_PointEntity) {
-                m_bounds = static_cast<const Assets::PointEntityDefinition*>(def)->bounds();
-                m_bounds.translate(origin());
-            } else if (!m_brushes.empty()) {
-                m_bounds = m_brushes[0]->bounds();
-                for (size_t i = 1; i < m_brushes.size(); ++i)
-                    m_bounds.mergeWith(m_brushes[i]->bounds());
-            } else {
-                m_bounds = DefaultBounds;
-                m_bounds.translate(origin());
-            }
-            m_boundsValid = true;
-        }
-        
         void Entity::setIsWorldspawn() {
             m_isWorldspawn = (classname() == PropertyValues::WorldspawnClassname);
         }
@@ -708,18 +722,5 @@ namespace TrenchBroom {
         m_model(NULL),
         m_boundsValid(false),
         m_isWorldspawn(false) {}
-        
-        void Entity::doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds) {
-            setOrigin(transformation * origin());
-            
-            const Mat4x4 rotation = stripTranslation(transformation);
-            applyRotation(rotation);
-        }
-
-        void Entity::setOrigin(const Vec3& origin) {
-            addOrUpdateProperty(PropertyKeys::Origin, origin.rounded().asString());
-        }
-
-        void Entity::applyRotation(const Mat4x4& rotation) {}
     }
 }

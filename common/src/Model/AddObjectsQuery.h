@@ -31,9 +31,11 @@ namespace TrenchBroom {
         private:
             ObjectList m_parents;
             ObjectList m_objects;
+            GroupList m_groups;
             EntityList m_entities;
             EntityBrushesMap m_brushes;
-            ObjectLayerMap m_layers;
+            ObjectLayerMap m_objectLayers;
+            ObjectGroupMap m_objectGroups;
         public:
             AddObjectsQuery();
             AddObjectsQuery(const RemoveObjectsQuery& removeQuery);
@@ -44,16 +46,29 @@ namespace TrenchBroom {
             
             const EntityList& entities() const;
             const EntityBrushesMap& brushes() const;
-            const ObjectLayerMap& layers() const;
+            const GroupList& groups() const;
+            const ObjectGroupMap& objectGroups() const;
+            const ObjectLayerMap& objectLayers() const;
             
-            void addEntity(Entity* entity, Layer* layer);
-            void addBrushes(const EntityBrushesMap& brushes, const ObjectLayerMap& layers);
-            void addBrushes(const BrushList& brushes, Entity* entity, const ObjectLayerMap& layers);
-            void addBrushes(const BrushList& brushes, Entity* entity, Layer* layer);
-            void addBrush(Brush* brush, Entity* entity, Layer* layer);
+            void addGroup(Group* group, Layer* layer, Group* container);
+            void addEntity(Entity* entity, Layer* layer, Group* group);
+            void addBrushes(const EntityBrushesMap& brushes, const ObjectLayerMap& layers, const ObjectGroupMap& groups);
+            void addBrushes(const BrushList& brushes, Entity* entity, const ObjectLayerMap& layers, const ObjectGroupMap& gropus);
+            void addBrushes(const BrushList& brushes, Entity* entity, Layer* layer, Group* group);
+            void addBrush(Brush* brush, Entity* entity, Layer* layer, Group* group);
         private:
             void setLayer(Object* object, Layer* layer);
+            void setGroup(Object* object, Group* group);
+            
+            bool checkGroup(Group* group, Layer* layer, Group* container) const;
+            bool checkEntity(Entity* entity, Layer* layer, Group* group) const;
+            bool checkBrush(Brush* brush, Entity* entity, Layer* layer, Group* group) const;
             bool checkBrushLayer(Brush* brush, Entity* entity, Layer* layer) const;
+            bool checkBrushGroup(Brush* brush, Entity* entity, Group* group) const;
+            bool checkObjectGroup(Layer* layer, Group* group) const;
+            
+            Layer* getLayer(Object* object) const;
+            Group* getGroup(Object* object) const;
         public:
             void clear();
             void clearAndDelete();
@@ -63,12 +78,14 @@ namespace TrenchBroom {
         private:
             AddObjectsQuery m_query;
             Layer* m_layer;
+            Group* m_group;
             Entity* m_entity;
         public:
-            AddObjectsQueryBuilder(Layer* layer, Entity* entity = NULL);
+            AddObjectsQueryBuilder(Layer* layer, Group* group, Entity* entity = NULL);
             const AddObjectsQuery& query() const;
             
             void setLayer(Layer* layer);
+            void setGroup(Group* group);
             void setEntity(Entity* entity);
         private:
             void doVisit(Entity* entity);

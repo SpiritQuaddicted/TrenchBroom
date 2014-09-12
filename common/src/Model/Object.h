@@ -34,9 +34,11 @@ namespace TrenchBroom {
         class ObjectVisitor {
         public:
             virtual ~ObjectVisitor();
+            void visit(Group* group);
             void visit(Entity* entity);
             void visit(Brush* brush);
         private:
+            virtual void doVisit(Group* group) = 0;
             virtual void doVisit(Entity* entity) = 0;
             virtual void doVisit(Brush* brush) = 0;
         };
@@ -44,9 +46,11 @@ namespace TrenchBroom {
         class ConstObjectVisitor {
         public:
             virtual ~ConstObjectVisitor();
+            void visit(const Group* group);
             void visit(const Entity* entity);
             void visit(const Brush* brush);
         private:
+            virtual void doVisit(const Group* group) = 0;
             virtual void doVisit(const Entity* entity) = 0;
             virtual void doVisit(const Brush* brush) = 0;
         };
@@ -60,10 +64,11 @@ namespace TrenchBroom {
             IssueType m_hiddenIssues;
             
             Layer* m_layer;
+            Group* m_group;
         public:
             virtual ~Object();
             
-            virtual const BBox3& bounds() const = 0;
+            const BBox3& bounds() const;
             
             template <class T>
             static BBox3 bounds(const std::vector<T*>& objects) {
@@ -97,6 +102,9 @@ namespace TrenchBroom {
             
             Layer* layer() const;
             void setLayer(Layer* layer);
+            
+            Group* group() const;
+            void setGroup(Group* group);
             
             Object* clone(const BBox3& worldBounds) const;
             
@@ -133,6 +141,8 @@ namespace TrenchBroom {
             void incChildSelectionCount();
             void decChildSelectionCount();
         private:
+            virtual const BBox3& doGetBounds() const = 0;
+            
             virtual void doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds) = 0;
             virtual bool doContains(const Object& object) const = 0;
             virtual bool doIntersects(const Object& object) const = 0;

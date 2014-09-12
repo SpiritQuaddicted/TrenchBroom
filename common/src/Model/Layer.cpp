@@ -21,6 +21,7 @@
 
 #include "Model/Brush.h"
 #include "Model/Entity.h"
+#include "Model/Group.h"
 #include "Model/Object.h"
 
 #include <algorithm>
@@ -66,6 +67,25 @@ namespace TrenchBroom {
             layerWillChangeNotifier(this, Attr_Locked);
             m_locked = locked;
             layerDidChangeNotifier(this, Attr_Locked);
+        }
+
+        void Layer::groupWillBeAdded(Group* group) {
+            assert(group->layer() == this);
+            layerWillChangeNotifier(this, Attr_Objects);
+        }
+        
+        void Layer::groupWasAdded(Group* group) {
+            objectWasAddedNotifier(this, group);
+            layerDidChangeNotifier(this, Attr_Objects);
+        }
+        
+        void Layer::groupWillBeRemoved(Group* group) {
+            layerWillChangeNotifier(this, Attr_Objects);
+        }
+        
+        void Layer::groupWasRemoved(Group* group) {
+            objectWasRemovedNotifier(this, group);
+            layerDidChangeNotifier(this, Attr_Objects);
         }
 
         void Layer::entityWillBeAdded(Entity* entity) {

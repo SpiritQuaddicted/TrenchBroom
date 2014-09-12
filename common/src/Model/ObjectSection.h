@@ -26,23 +26,31 @@
 namespace TrenchBroom {
     namespace Model {
         class ObjectSection {
-        private:
+        protected:
             ObjectList m_objects;
+            GroupList m_groups;
             EntityList m_entities;
             BrushList m_worldBrushes;
         public:
             virtual ~ObjectSection();
             
             const ObjectList& objects() const;
+            const GroupList& groups() const;
             const EntityList& entities() const;
             BrushList entityBrushes() const;
             const BrushList& worldBrushes() const;
 
+            void addGroup(Group* group);
             void addEntity(Entity* entity);
             void addBrush(Brush* brush);
+            void removeGroup(Group* group);
             void removeEntity(Entity* entity);
             void removeBrush(Brush* brush);
         private:
+            virtual void groupWillBeAdded(Group* group);
+            virtual void groupWasAdded(Group* group);
+            virtual void groupWillBeRemoved(Group* group);
+            virtual void groupWasRemoved(Group* group);
             virtual void entityWillBeAdded(Entity* entity);
             virtual void entityWasAdded(Entity* entity);
             virtual void entityWillBeRemoved(Entity* entity);

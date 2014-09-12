@@ -100,11 +100,6 @@ namespace TrenchBroom {
                 m_parent->childSelectionChanged(selected());
         }
         
-        const BBox3& Brush::bounds() const {
-            assert(m_geometry != NULL);
-            return m_geometry->bounds;
-        }
-
         void Brush::pick(const Ray3& ray, Hits& hits) {
             if (Math::isnan(bounds().intersectWithRay(ray)))
                 return;
@@ -380,6 +375,11 @@ namespace TrenchBroom {
                 m_transparent = result.transparent;
                 m_contentTypeValid = true;
             }
+        }
+
+        const BBox3& Brush::doGetBounds() const {
+            assert(m_geometry != NULL);
+            return m_geometry->bounds;
         }
 
         void Brush::doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds) {

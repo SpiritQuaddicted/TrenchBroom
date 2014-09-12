@@ -88,7 +88,6 @@ namespace TrenchBroom {
             void select();
             void deselect();
             
-            const BBox3& bounds() const;
             void pick(const Ray3& ray, Hits& hits);
             
             const BrushFaceList& faces() const;
@@ -133,6 +132,8 @@ namespace TrenchBroom {
             BrushContentType::FlagType contentTypeFlags() const;
             void validateContentType() const;
 
+            const BBox3& doGetBounds() const;
+            
             void doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds);
             bool doContains(const Object& object) const;
             bool doIntersects(const Object& object) const;

@@ -28,8 +28,11 @@ namespace TrenchBroom {
         class Group : public Object, public ObjectSection {
         private:
             String m_name;
+            mutable BBox3 m_bounds;
         public:
         private:
+            const BBox3& doGetBounds() const;
+            
             void doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds);
             bool doContains(const Object& object) const;
             bool doIntersects(const Object& object) const;
@@ -38,6 +41,20 @@ namespace TrenchBroom {
             void doAccept(ConstObjectVisitor& visitor) const;
             void doAcceptRecursively(ObjectVisitor& visitor);
             void doAcceptRecursively(ConstObjectVisitor& visitor) const;
+
+            // inherited from ObjectSection:
+            void groupWillBeAdded(Group* group);
+            void groupWasAdded(Group* group);
+            void groupWillBeRemoved(Group* group);
+            void groupWasRemoved(Group* group);
+            void entityWillBeAdded(Entity* entity);
+            void entityWasAdded(Entity* entity);
+            void entityWillBeRemoved(Entity* entity);
+            void entityWasRemoved(Entity* entity);
+            void brushWillBeAdded(Brush* brush);
+            void brushWasAdded(Brush* brush);
+            void brushWillBeRemoved(Brush* brush);
+            void brushWasRemoved(Brush* brush);
         };
     }
 }

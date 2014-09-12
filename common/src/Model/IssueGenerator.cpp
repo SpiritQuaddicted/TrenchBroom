@@ -27,31 +27,9 @@
 
 namespace TrenchBroom {
     namespace Model {
-        class Visitor : public ObjectVisitor {
-        private:
-            const IssueGenerator& m_generator;
-            IssueList& m_issues;
-        public:
-            Visitor(const IssueGenerator& generator, IssueList& issues) :
-            m_generator(generator),
-            m_issues(issues) {}
-            
-            void doVisit(Entity* entity) {
-                m_generator.generate(entity, m_issues);
-            }
-            
-            void doVisit(Brush* brush) {
-                m_generator.generate(brush, m_issues);
-            }
-        };
-        
         IssueGenerator::~IssueGenerator() {}
         
-        void IssueGenerator::generate(Object* object, IssueList& issues) const {
-            Visitor visitor(*this, issues);
-            object->accept(visitor);
-        }
-
+        void IssueGenerator::generate(Group* group, IssueList& issues) const {}
         void IssueGenerator::generate(Entity* entity, IssueList& issues) const {}
         void IssueGenerator::generate(Brush* brush, IssueList& issues) const {}
     }

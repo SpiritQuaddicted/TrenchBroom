@@ -73,6 +73,12 @@ namespace TrenchBroom {
         typedef std::vector<ObjectParentPair> ObjectParentList;
         typedef std::map<Object*, ObjectList> ObjectChildrenMap;
         
+        class Group;
+        typedef std::vector<Group*> GroupList;
+        static const GroupList EmptyGroupList(0);
+        typedef std::map<Object*, Group*> ObjectGroupMap;
+        static const ObjectGroupMap EmptyGroupMap;
+        
         class Brush;
         typedef std::vector<Brush*> BrushList;
         static const BrushList EmptyBrushList(0);

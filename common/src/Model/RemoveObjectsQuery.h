@@ -33,6 +33,7 @@ namespace TrenchBroom {
         private:
             ObjectList m_parents;
             ObjectList m_objects;
+            GroupList m_groups;
             EntityList m_entities;
             BrushList m_brushes;
             
@@ -46,9 +47,18 @@ namespace TrenchBroom {
             const ObjectList& objects() const;
             size_t objectCount() const;
 
+            const GroupList& groups() const;
             const EntityList& entities() const;
             const BrushList& brushes() const;
 
+            template <typename I>
+            void removeGroups(I cur, const I end) {
+                while (cur != end) {
+                    removeGroup(*cur);
+                    ++cur;
+                }
+            }
+            
             template <typename I>
             void removeEntities(I cur, const I end) {
                 while (cur != end) {
@@ -65,12 +75,14 @@ namespace TrenchBroom {
                 }
             }
             
+            void removeGroup(Group* group);
             void removeEntity(Entity* entity);
             void removeBrush(Brush* brush);
             
             void clear();
             void clearAndDelete();
         private:
+            void doVisit(Group* group);
             void doVisit(Entity* entity);
             void doVisit(Brush* brush);
         };

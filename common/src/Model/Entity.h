@@ -80,7 +80,6 @@ namespace TrenchBroom {
             Entity* clone(const BBox3& worldBounds) const;
             EntitySnapshot takeSnapshot();
             
-            const BBox3& bounds() const;
             void pick(const Ray3& ray, Hits& hits);
             
             Assets::EntityDefinition* definition() const;
@@ -183,11 +182,15 @@ namespace TrenchBroom {
             
             void findMissingTargets(const PropertyKey& prefix, PropertyKeyList& result) const;
             
-            void doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds);
-
             void setOrigin(const Vec3& origin);
             virtual void applyRotation(const Mat4x4& rotation);
 
+            const BBox3& doGetBounds() const;
+            void invalidateBounds();
+            void validateBounds() const;
+
+            void doTransform(const Mat4x4& transformation, const bool lockTextures, const BBox3& worldBounds);
+            
             bool doContains(const Object& object) const;
             bool doIntersects(const Object& object) const;
             
@@ -196,8 +199,6 @@ namespace TrenchBroom {
             void doAcceptRecursively(ObjectVisitor& visitor);
             void doAcceptRecursively(ConstObjectVisitor& visitor) const;
             
-            void invalidateBounds();
-            void validateBounds() const;
             void setIsWorldspawn();
         protected:
             void addLinkSource(Entity* entity);

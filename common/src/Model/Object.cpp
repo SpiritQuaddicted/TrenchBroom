@@ -28,6 +28,10 @@ namespace TrenchBroom {
     namespace Model {
         ObjectVisitor::~ObjectVisitor() {}
         
+        void ObjectVisitor::visit(Group* group) {
+            doVisit(group);
+        }
+
         void ObjectVisitor::visit(Entity* entity) {
             doVisit(entity);
         }
@@ -38,15 +42,23 @@ namespace TrenchBroom {
         
         ConstObjectVisitor::~ConstObjectVisitor() {}
         
+        void ConstObjectVisitor::visit(const Group* group) {
+            doVisit(group);
+        }
+
         void ConstObjectVisitor::visit(const Entity* entity) {
-            return doVisit(entity);
+            doVisit(entity);
         }
         
         void ConstObjectVisitor::visit(const Brush* brush) {
-            return doVisit(brush);
+            doVisit(brush);
         }
 
         Object::~Object() {}
+
+        const BBox3& Object::bounds() const {
+            return doGetBounds();
+        }
 
         size_t Object::filePosition() const {
             return m_lineNumber;
@@ -123,6 +135,10 @@ namespace TrenchBroom {
                 assert(m_layer != NULL);
             }
             
+            void doVisit(Group* group) {
+                m_layer->addGroup(group);
+            }
+
             void doVisit(Entity* entity) {
                 m_layer->addEntity(entity);
             }
@@ -139,6 +155,10 @@ namespace TrenchBroom {
             RemoveFromLayer(Layer* layer) :
             m_layer(layer) {
                 assert(m_layer != NULL);
+            }
+            
+            void doVisit(Group* group) {
+                m_layer->removeGroup(group);
             }
             
             void doVisit(Entity* entity) {
@@ -206,7 +226,8 @@ namespace TrenchBroom {
         m_selected(false),
         m_childSelectionCount(0),
         m_hiddenIssues(0),
-        m_layer(NULL) {}
+        m_layer(NULL),
+        m_group(NULL) {}
 
         void Object::incChildSelectionCount() {
             ++m_childSelectionCount;

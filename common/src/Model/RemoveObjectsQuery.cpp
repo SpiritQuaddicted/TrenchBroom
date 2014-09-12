@@ -23,12 +23,16 @@
 #include "AddObjectsQuery.h"
 #include "Model/Brush.h"
 #include "Model/Entity.h"
+#include "Model/Group.h"
 
 namespace TrenchBroom {
     namespace Model {
         RemoveObjectsQuery::RemoveObjectsQuery() {}
         
         RemoveObjectsQuery::RemoveObjectsQuery(const AddObjectsQuery& addQuery) {
+            const GroupList& addedGroups = addQuery.groups();
+            removeGroups(addedGroups.begin(), addedGroups.end());
+            
             const EntityList& addedEntities = addQuery.entities();
             removeEntities(addedEntities.begin(), addedEntities.end());
             
@@ -52,12 +56,24 @@ namespace TrenchBroom {
             return m_objects.size();
         }
         
+        const GroupList& RemoveObjectsQuery::groups() const {
+            return m_groups;
+        }
+
         const EntityList& RemoveObjectsQuery::entities() const {
             return m_entities;
         }
         
         const BrushList& RemoveObjectsQuery::brushes() const {
             return m_brushes;
+        }
+        
+        void RemoveObjectsQuery::removeGroup(Group* group) {
+            assert(group != NULL);
+            assert(!VectorUtils::contains(m_groups, group));
+            assert(!VectorUtils::contains(m_objects, group));
+            m_groups.push_back(group);
+            m_objects.push_back(group);
         }
         
         void RemoveObjectsQuery::removeEntity(Entity* entity) {
@@ -99,6 +115,7 @@ namespace TrenchBroom {
         void RemoveObjectsQuery::clear() {
             m_parents.clear();
             m_objects.clear();
+            m_groups.clear();
             m_entities.clear();
             m_brushes.clear();
             m_brushCounts.clear();
@@ -107,11 +124,16 @@ namespace TrenchBroom {
         void RemoveObjectsQuery::clearAndDelete() {
             m_parents.clear();
             m_objects.clear();
+            VectorUtils::clearAndDelete(m_groups);
             VectorUtils::clearAndDelete(m_entities);
             VectorUtils::clearAndDelete(m_brushes);
             m_brushCounts.clear();
         }
 
+        void RemoveObjectsQuery::doVisit(Group* group) {
+            removeGroup(group);
+        }
+        
         void RemoveObjectsQuery::doVisit(Entity* entity) {
             removeEntity(entity);
         }

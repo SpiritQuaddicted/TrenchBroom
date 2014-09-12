@@ -32,7 +32,7 @@ namespace TrenchBroom {
             virtual IssueType type() const = 0;
             virtual const String& description() const = 0;
 
-            void generate(Object* object, IssueList& issues) const;
+            virtual void generate(Group* group, IssueList& issues) const;
             virtual void generate(Entity* entity, IssueList& issues) const;
             virtual void generate(Brush* brush, IssueList& issues) const;
         };

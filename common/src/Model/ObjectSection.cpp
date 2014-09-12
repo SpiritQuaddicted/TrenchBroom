@@ -22,6 +22,7 @@
 #include "CollectionUtils.h"
 #include "Model/Brush.h"
 #include "Model/Entity.h"
+#include "Model/Group.h"
 #include "Model/Object.h"
 
 namespace TrenchBroom {
@@ -40,7 +41,19 @@ namespace TrenchBroom {
             return m_worldBrushes;
         }
         
+        void ObjectSection::addGroup(Group* group) {
+            assert(group != NULL);
+            assert(!VectorUtils::contains(m_objects, group));
+            assert(!VectorUtils::contains(m_groups, group));
+
+            groupWillBeAdded(group);
+            m_objects.push_back(group);
+            m_groups.push_back(group);
+            groupWasAdded(group);
+        }
+        
         void ObjectSection::addEntity(Entity* entity) {
+            assert(entity != NULL);
             assert(!VectorUtils::contains(m_objects, entity));
             assert(!VectorUtils::contains(m_entities, entity));
 
@@ -52,6 +65,7 @@ namespace TrenchBroom {
         }
         
         void ObjectSection::addBrush(Brush* brush) {
+            assert(brush != NULL);
             assert(!VectorUtils::contains(m_objects, brush));
             assert(!VectorUtils::contains(m_worldBrushes, brush));
             
@@ -65,7 +79,19 @@ namespace TrenchBroom {
             brushWasAdded(brush);
         }
         
+        void ObjectSection::removeGroup(Group* group) {
+            assert(group != NULL);
+            assert(VectorUtils::contains(m_objects, group));
+            assert(VectorUtils::contains(m_groups, group));
+            
+            groupWillBeRemoved(group);
+            VectorUtils::erase(m_groups, group);
+            VectorUtils::erase(m_objects, group);
+            groupWasRemoved(group);
+        }
+        
         void ObjectSection::removeEntity(Entity* entity) {
+            assert(entity != NULL);
             assert(VectorUtils::contains(m_objects, entity));
 
             entityWillBeRemoved(entity);
@@ -78,6 +104,7 @@ namespace TrenchBroom {
         }
         
         void ObjectSection::removeBrush(Brush* brush) {
+            assert(brush != NULL);
             assert(VectorUtils::contains(m_objects, brush));
 
             brushWillBeRemoved(brush);
